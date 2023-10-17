@@ -1,0 +1,30 @@
+- hosts: all
+  become: true
+  vars:
+    container_count: 4
+    default_container_name: docker
+    default_container_image: ubuntu
+    default_container_command: sleep 1d
+
+  tasks:
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+    - name: Pull Nginx Docker image
+      command: docker pull nginx
+      become: yes
+
+    - name: Run Nginx Docker container
+      command: docker run -d -p 81:80 nginx
+      become: yes
